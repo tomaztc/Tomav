@@ -58,9 +58,9 @@ def standard_airplane(name, delta_xr_w=-5.1, x_tank_c_w=0.14):
             'D_n': D_N, # ROLLS-ROYCE TRENT XWB-84 - Nacelle diameter [m]
             'n_engines': 2, # ROLLS-ROYCE TRENT XWB-84 - Number of engines
             'n_engines_under_wing': 2, # ROLLS-ROYCE TRENT XWB-84 - Number of engines installed under the wing
-            'x_nlg': 4.7, # Longitudinal position of the nose landing gear [m]
+            'x_nlg': 6, # Longitudinal position of the nose landing gear [m]
             'x_mlg': None, # CALCULADO - Longitudinal position of the main landing gear [m]
-            'y_mlg': 5.9, # MÁXIMO POSSÍVEL - Lateral position of the main landing gear [m]
+            'y_mlg': 5.5, # MÁXIMO POSSÍVEL - Lateral position of the main landing gear [m]
             'z_lg': -D_F/2 - ALTURA_RODAS, # Vertical position of the landing gear [m]
             'x_tailstrike': L_F - L_T - 3, # Longitudinal position of critical tailstrike point [m]
             'z_tailstrike': -D_F/2, # Vertical position of critical tailstrike point [m]
@@ -88,10 +88,10 @@ def standard_airplane(name, delta_xr_w=-5.1, x_tank_c_w=0.14):
             'distance_landing': 2900, # Required landing distance [m]
             'deltaISA_landing': 0, # REQUISITO - Variation from ISA standard temperature [ºC]
             'MLW_frac': 207000 / 280000, # A350 - Max Landing Weight / Max Takeoff Weight - From Obert's paper
-            'altitude_cruise': 32500*ft2m, # VARIÁVEL - Cruise altitude [m]
+            'altitude_cruise': 32400*ft2m, # VARIÁVEL - Cruise altitude [m]
             'Mach_cruise': 0.85, # REQUISITO - Cruise Mach number
             'range_cruise': 8000 * nm2m, # REQUISITO - Cruise range [m]
-            'altitude_maxcruise': 31100*ft2m, # VARIÁVEL - Altitude for high-speed cruise [m]
+            'altitude_maxcruise': 31000*ft2m, # VARIÁVEL - Altitude for high-speed cruise [m]
             'Mach_maxcruise': 0.90, # REQUISITO - Mach for high-speed cruise [m]
             'time_loiter': 45 * 60, # REQUISITO - Loiter time [s] - DOI: 45/55-3572
             'altitude_loiter': 1500 * ft2m, # VARIÁVEL - Loiter altitude [m] - DOI: 45/55-3572

@@ -33,7 +33,7 @@ from designTool.analyze import analyze
 
 # %% CONFIGURAÇÕES DE PLOT
 mpl.rcParams['lines.linewidth'] = 2
-mpl.rcParams['legend.fontsize'] = 7
+mpl.rcParams['legend.fontsize'] = 8
 mpl.rcParams['figure.max_open_warning'] = 0
 plt.rcParams['axes.grid'] = True
 plt.rcParams['xtick.minor.visible'] = True
@@ -78,11 +78,11 @@ def plotar_curva_polar_condicao(condicao, titulo, LD=False):
     CD, CLmax, _ = aerodynamics_condicao_e_CL(airplane, condicao, CL)
 
     if LD == True:
-        plt.scatter(CL, CL/CD, s=30, zorder=5, label=f"Voo no {titulo}: CL={CL:.2f}, L/D={(CL / CD):.2f}")
+        plt.scatter(CL, CL/CD, s=40, zorder=5, label=f"Voo no {titulo}: CL={CL:.2f}, L/D={(CL / CD):.2f}")
     else:
-        plt.scatter(CD, CL, s=30, zorder=5, label=f"Voo no {titulo}: CL={CL:.2f}, CD={CD:.4f}")
+        plt.scatter(CD, CL, s=40, zorder=5, label=f"Voo no {titulo}: CL={CL:.2f}, CD={CD:.4f}")
 
-    CL_space = np.linspace(0, CLmax, 200)
+    CL_space = np.linspace(0, CLmax, 100)
     CD_space = []
     for CL in CL_space:
         CD, _, _ = aerodynamics_condicao_e_CL(airplane, condicao, CL)
@@ -91,17 +91,17 @@ def plotar_curva_polar_condicao(condicao, titulo, LD=False):
     for CL in (0, CLmax):
         CD, _, _ = aerodynamics_condicao_e_CL(airplane, condicao, CL)
         if LD == True:
-            plt.scatter(CL, CL / CD, color="black", s=20, zorder=5, label="_")
-            plt.annotate(f"CL={CL:.2f}\nL/D={(CL/CD):.2f}", (CL, CL/CD), fontsize=7)
+            plt.scatter(CL, CL / CD, color="black", s=30, zorder=5, label="_")
+            plt.annotate(f"CL={CL:.2f}\nL/D={(CL/CD):.2f}", (CL, CL/CD), fontsize=8, ha="center", zorder=5)
         else:
-            plt.scatter(CD, CL, color="black", s=20, zorder=5, label="_")
-            plt.annotate(f"CL={CL:.2f}\nCD={CD:.4f}", (CD, CL), fontsize=7)
+            plt.scatter(CD, CL, color="black", s=30, zorder=5, label="_")
+            plt.annotate(f"CL={CL:.2f}\nCD={CD:.4f}", (CD, CL), fontsize=8, ha="center", zorder=5)
 
     if LD == True:
         LD_space = CL_space / CD_space
         LD_max, CL_max_LD = max(zip(LD_space, CL_space))
-        plt.scatter(CL_max_LD, LD_max, color="black", s=20, zorder=5, label="_")
-        plt.annotate(f"Máximo:\nL/D={LD_max:.2f}\nCL={CL_max_LD:.2f}", (CL_max_LD, LD_max), ha="center", fontsize=7)
+        plt.scatter(CL_max_LD, LD_max, color="black", s=30, zorder=5, label="_")
+        plt.annotate(f"Máximo:\nL/D={LD_max:.2f}\nCL={CL_max_LD:.2f}", (CL_max_LD, LD_max), ha="center", va="top", fontsize=8, zorder=5)
         plt.plot(CL_space, LD_space, label=f"Polar do {titulo}")
     else:
         plt.plot(CD_space, CL_space, label=f"Polar do {titulo}")
@@ -121,7 +121,7 @@ def calcular_CD_Mach_CL_fixo(Mach, CL):
 
 def calcular_ld_max(airplane, condicao):
     _, CLmax, _ = aerodynamics_condicao_e_CL(airplane, condicao, 0)
-    CL_space = np.linspace(0.01, CLmax, 500)
+    CL_space = np.linspace(0.01, CLmax, 400)
     LD_space = []
     for CL in CL_space:
         CD, _, _ = aerodynamics_condicao_e_CL(airplane, condicao, CL)
@@ -440,8 +440,8 @@ RESTRICOES_VARREDURA = [ # (key, operador, limite+MARGEM, label_legenda, cor)
     ("alpha_tailstrike", "<", ALPHA_TAILSTRIKE_MIN+0.1, f"alpha_tailstrike < {ALPHA_TAILSTRIKE_MIN+0.1:.1f}°", "C7"),
     ("alpha_tipback", "<", ALPHA_TIPBACK_MIN+0.1, f"alpha_tipback < {ALPHA_TIPBACK_MIN+0.1:.1f}°", "C8"),
     ("phi_overturn", ">", PHI_OVERTURN_MAX-0.1, f"phi_overturn > {PHI_OVERTURN_MAX-0.1:.1f}°", "C9"),
-    ("frac_nlg_aft", "<", FRAC_NLG_AFT_MIN+0.01, f"frac_nlg_aft < {FRAC_NLG_AFT_MIN+0.01:.2%}", "C10"),
-    ("frac_nlg_fwd", ">", FRAC_NLG_FWD_MAX-0.01, f"frac_nlg_fwd > {FRAC_NLG_FWD_MAX-0.01:.2%}", "C11"),
+    ("frac_nlg_aft", "<", FRAC_NLG_AFT_MIN+0.005, f"frac_nlg_aft < {FRAC_NLG_AFT_MIN+0.005:.2%}", "C10"),
+    ("frac_nlg_fwd", ">", FRAC_NLG_FWD_MAX-0.005, f"frac_nlg_fwd > {FRAC_NLG_FWD_MAX-0.005:.2%}", "C11"),
 ]
 
 LIMITES_INFERIORES_RESTRICOES = np.array([-np.inf if op == ">" else (limite / (abs(limite) if limite != 0 else 1.0)) for _, op, limite, _, _ in RESTRICOES_VARREDURA])
@@ -449,40 +449,40 @@ LIMITES_SUPERIORES_RESTRICOES = np.array([(limite / (abs(limite) if limite != 0 
 
 PARAMETROS_VARREDURA = [ # (titulo, xlabel, key_input, valores, padrao)
     # Asa
-    ("Variação na Posição da Asa", "delta_xr_w (m)", "delta_xr_w", np.linspace(-8, 0, 200), delta_xr_w),
-    ("Área da Asa", "S_w (m²)", "S_w", np.linspace(300, 500, 200), S_w),
-    ("Enflechamento da Asa", "sweep_w (°)", "sweep_w", np.radians(np.linspace(25, 45, 200)), sweep_w),
-    # ("Alongamento da Asa", "AR_w", "AR_w", np.linspace(6, 10.5, 200), AR_w),
-    # ("Afilamento da Asa", "taper_w", "taper_w", np.linspace(0.17, 1, 200), taper_w),
-    # ("Espessura Relativa da Asa (raiz)", "tcr_w", "tcr_w", np.linspace(0.11, 0.175, 200), tcr_w),
-    # ("Espessura Relativa da Asa (ponta)","tct_w", "tct_w", np.linspace(0.08, 0.12, 200), tct_w),
-    # ("Corda do Flap",  "c_flap_c_wing", "c_flap_c_wing", np.linspace(0.15, 0.33, 200), c_flap_c_wing),
-    ("Envergadura do Flap",  "b_flap_b_wing", "b_flap_b_wing", np.linspace(0.40, 0.65, 200), b_flap_b_wing),
-    # ("Corda do Slat",  "c_slat_c_wing", "c_slat_c_wing", np.linspace(0, 0.17, 200), c_slat_c_wing),
-    # ("Envergadura do Slat",  "b_slat_b_wing", "b_slat_b_wing", np.linspace(0, 0.90, 200), b_slat_b_wing),
-    ("Posição do tanque", "x_tank_c_w", "x_tank_c_w", np.linspace(0.1, 0.7, 200), x_tank_c_w),
+    ("Variação na Posição da Asa", "delta_xr_w (m)", "delta_xr_w", np.linspace(-8, 0, 100), delta_xr_w),
+    ("Área da Asa", "S_w (m²)", "S_w", np.linspace(250, 400, 100), S_w),
+    ("Enflechamento da Asa", "sweep_w (°)", "sweep_w", np.radians(np.linspace(25, 45, 100)), sweep_w),
+    # ("Alongamento da Asa", "AR_w", "AR_w", np.linspace(6, 10.5, 100), AR_w),
+    # ("Afilamento da Asa", "taper_w", "taper_w", np.linspace(0.17, 1, 100), taper_w),
+    # ("Espessura Relativa da Asa (raiz)", "tcr_w", "tcr_w", np.linspace(0.11, 0.175, 100), tcr_w),
+    # ("Espessura Relativa da Asa (ponta)","tct_w", "tct_w", np.linspace(0.08, 0.12, 100), tct_w),
+    ("Corda do Flap",  "c_flap_c_wing", "c_flap_c_wing", np.linspace(0.15, 0.33, 100), c_flap_c_wing),
+    ("Envergadura do Flap",  "b_flap_b_wing", "b_flap_b_wing", np.linspace(0.40, 0.65, 100), b_flap_b_wing),
+    # ("Corda do Slat",  "c_slat_c_wing", "c_slat_c_wing", np.linspace(0, 0.17, 100), c_slat_c_wing),
+    # ("Envergadura do Slat",  "b_slat_b_wing", "b_slat_b_wing", np.linspace(0, 0.90, 100), b_slat_b_wing),
+    ("Posição do tanque", "x_tank_c_w", "x_tank_c_w", np.linspace(0.1, 0.7, 100), x_tank_c_w),
     
     # Empenagem Horizontal
-    # ("Vol. Estabilizador Horiz.","Cht", "Cht", np.linspace(0.85, 1.2, 200), Cht),
-    # ("Alongamento da EH", "AR_h", "AR_h", np.linspace(3.4, 6, 200), AR_h),
-    # ("Enflechamento da EH", "sweep_h (°)", "sweep_h", np.radians(np.linspace(20, 45, 200)), sweep_h),
-    # ("Afilamento da EH", "taper_h", "taper_h", np.linspace(0.35, 0.60, 200), taper_h),
-    # ("Espessura Relativa da EH (raiz)", "tcr_h", "tcr_h", np.linspace(0.09, 0.12, 200), tcr_h),
-    # ("Espessura Relativa da EH (ponta)","tct_h", "tct_h", np.linspace(0.08, 0.12, 200), tct_h),
+    ("Vol. Estabilizador Horiz.","Cht", "Cht", np.linspace(0.85, 1.2, 100), Cht),
+    # ("Alongamento da EH", "AR_h", "AR_h", np.linspace(3.4, 6, 100), AR_h),
+    # ("Enflechamento da EH", "sweep_h (°)", "sweep_h", np.radians(np.linspace(20, 45, 100)), sweep_h),
+    # ("Afilamento da EH", "taper_h", "taper_h", np.linspace(0.35, 0.60, 100), taper_h),
+    # ("Espessura Relativa da EH (raiz)", "tcr_h", "tcr_h", np.linspace(0.09, 0.12, 100), tcr_h),
+    # ("Espessura Relativa da EH (ponta)","tct_h", "tct_h", np.linspace(0.08, 0.12, 100), tct_h),
     
     # Empenagem Vertical
-    # ("Vol. Estabilizador Vert.", "Cvt", "Cvt", np.linspace(0.075, 0.11, 200), Cvt),
-    # ("Alongamento da EV", "AR_v", "AR_v", np.linspace(1.2, 2, 200), AR_v),
-    # ("Enflechamento da EV", "sweep_v (°)", "sweep_v", np.radians(np.linspace(30, 50, 200)), sweep_v),
-    # ("Afilamento da EV", "taper_v", "taper_v", np.linspace(0.35, 0.60, 200), taper_v),
-    # ("Espessura Relativa da EV (raiz)", "tcr_v", "tcr_v", np.linspace(0.095, 0.12, 200), tcr_v),
-    # ("Espessura Relativa da EV (ponta)","tct_v", "tct_v", np.linspace(0.08, 0.12, 200), tct_v),
+    ("Vol. Estabilizador Vert.", "Cvt", "Cvt", np.linspace(0.075, 0.11, 100), Cvt),
+    # ("Alongamento da EV", "AR_v", "AR_v", np.linspace(1.2, 2, 100), AR_v),
+    # ("Enflechamento da EV", "sweep_v (°)", "sweep_v", np.radians(np.linspace(30, 50, 100)), sweep_v),
+    # ("Afilamento da EV", "taper_v", "taper_v", np.linspace(0.35, 0.60, 100), taper_v),
+    # ("Espessura Relativa da EV (raiz)", "tcr_v", "tcr_v", np.linspace(0.095, 0.12, 100), tcr_v),
+    # ("Espessura Relativa da EV (ponta)","tct_v", "tct_v", np.linspace(0.08, 0.12, 100), tct_v),
     
     # Voo
-    ("Altitude de Cruzeiro", "altitude_cruise (m)", "altitude_cruise", np.linspace(ALTITUDE_CRUZEIRO_MINIMA, ALTITUDE_CRUZEIRO_MAXIMA, 200), h_CR),
-    # ("Altitude de Cruzeiro Alternativo", "altitude_altcruise (m)", "altitude_altcruise", np.linspace(ALTITUDE_CRUZEIRO_MINIMA, ALTITUDE_CRUZEIRO_MAXIMA, 200), h_ALT),
-    ("Mach de Cruzeiro Alternativo", "Mach_altcruise", "Mach_altcruise", np.linspace(0.5, 0.9, 200), Mach_ALT),
-    # ("Altitude de Loiter", "altitude_loiter (m)", "altitude_loiter", np.linspace(1500*ft2m, ALTITUDE_CRUZEIRO_MAXIMA, 200), h_LOITER),
+    # ("Altitude de Cruzeiro", "altitude_cruise (m)", "altitude_cruise", np.linspace(ALTITUDE_CRUZEIRO_MINIMA, ALTITUDE_CRUZEIRO_MAXIMA, 100), h_CR),
+    # ("Altitude de Cruzeiro Alternativo", "altitude_altcruise (m)", "altitude_altcruise", np.linspace(ALTITUDE_CRUZEIRO_MINIMA, ALTITUDE_CRUZEIRO_MAXIMA, 100), h_ALT),
+    ("Mach de Cruzeiro Alternativo", "Mach_altcruise", "Mach_altcruise", np.linspace(0.5, 0.9, 100), Mach_ALT),
+    # ("Altitude de Loiter", "altitude_loiter (m)", "altitude_loiter", np.linspace(1500*ft2m, ALTITUDE_CRUZEIRO_MAXIMA, 100), h_LOITER),
 ]
 
 LIMITES_PARAMETROS = [(xs[0], xs[-1]) for _, _, _, xs, _ in PARAMETROS_VARREDURA]
@@ -664,7 +664,7 @@ print(f"Mach no Cruzeiro = {Mach_CR:.2f}")
 print(f"Mach de Divergência = {Mdd:.2f}")
 print(f"Mach Crítico = {Mc:.2f}")
 
-Mach_space = np.linspace(0.4, 1, 200)
+Mach_space = np.linspace(0.4, 1, 100)
 
 plt.figure(num="Cruzeiro - Mach x CD, com CL = CL do Cruzeiro")
 plt.title(f"Cruzeiro - Mach x CD, com CL = CL do Cruzeiro")
@@ -674,23 +674,24 @@ plt.ylabel("CD")
 CD_space = [calcular_CD_Mach_CL_fixo(Mach, CL_CR) for Mach in Mach_space]
 plt.plot(Mach_space, CD_space)
 
-for Mach, titulo in zip((Mach_CR, Mdd, Mc), ("Cruzeiro", "Mdd", "Mc")):
+for Mach, titulo, cor in zip((Mc, Mach_CR, Mdd), ("Mc", "Cruzeiro", "Mdd"), ("C1", "C0", "C3")):
     CD_Mach = calcular_CD_Mach_CL_fixo(Mach, CL_CR)
-    plt.scatter(Mach, CD_Mach, color=("red" if titulo == "Cruzeiro" else "black"), s=20, zorder=5, label="_")
-    plt.annotate(f"{titulo}\nMach={Mach:.2f}\nCD={CD_Mach:.4f}", (Mach, CD_Mach), fontsize=7)
+    plt.axvline(Mach, color=cor, linestyle="--", label=f"{titulo} (Mach={Mach:.2f}, CD={10000*CD_Mach:.0f} counts)")
 
-plt.figure(num="Cruzeiro - Mach x CD, com CL variável")
-plt.title(f"Cruzeiro - Mach x CD, com CL variável")
-plt.xlabel("Mach")
-plt.ylabel("CD")
+plt.legend()
 
-CD_space = [calcular_CD_Mach_CL_variavel(Mach) for Mach in Mach_space]
-plt.plot(Mach_space, CD_space)
+# plt.figure(num="Cruzeiro - Mach x CD, com CL variável")
+# plt.title(f"Cruzeiro - Mach x CD, com CL variável")
+# plt.xlabel("Mach")
+# plt.ylabel("CD")
 
-for Mach, titulo in zip((Mach_CR, Mdd, Mc), ("Cruzeiro", "Mdd", "Mc")):
-    CD_Mach = calcular_CD_Mach_CL_variavel(Mach)
-    plt.scatter(Mach, CD_Mach, color=("red" if titulo == "Cruzeiro" else "black"), s=20, zorder=5, label="_")
-    plt.annotate(f"{titulo}\nMach={Mach:.2f}\nCD={CD_Mach:.4f}", (Mach, CD_Mach), fontsize=7)
+# CD_space = [calcular_CD_Mach_CL_variavel(Mach) for Mach in Mach_space]
+# plt.plot(Mach_space, CD_space)
+
+# for Mach, titulo, cor in zip((Mach_CR, Mdd, Mc), ("Cruzeiro", "Mdd", "Mc"), ("C0", "C2", "C1")):
+#     CD_Mach = calcular_CD_Mach_CL_variavel(Mach)
+#     plt.scatter(Mach, CD_Mach, color=("red" if titulo == "Cruzeiro" else "black"), s=20, zorder=5, label="_")
+#     plt.annotate(f"{titulo}\nMach={Mach:.2f}\nCD={CD_Mach:.4f}", (Mach, CD_Mach), fontsize=8)
 
 # %% DISTÂNCIAS DE DECOLAGEM E POUSO
 print("\n=== DISTÂNCIA DE DECOLAGEM (2º SEGMENTO) ===")
@@ -710,12 +711,12 @@ B_LD = -10 * gravity * h_obstaculo_LD / x_LD
 d_LD = ((W_LD/S_w) / (rho_LD * CLmax_LD) - B_LD) / A_LD
 
 print(f"CLmax_LD = {CLmax_LD:.2f}")
-print(f"W_LD = {W_LD/gravity:.1f} kgf")
+print(f"W_LD = {W_LD/gravity:.0f} kgf")
 print(f"d_LD = {d_LD:.0f} m")
 print(f"Limite: {D_LD_MAX:.0f} m")
 
 # %% ENFLECHAMENTO x CLMAX, d_TO NO 2º SEGMENTO
-enflechamento_space = np.linspace(25, 60, 200)
+enflechamento_space = np.linspace(25, 60, 100)
 CLmax_space = []
 d_TO_space = []
 
@@ -740,27 +741,24 @@ ax2.set_ylabel("d_TO (m)")
 ax1.plot(enflechamento_space, CLmax_space, color="#1F77B4", label="CLmax")
 ax2.plot(enflechamento_space, d_TO_space, color="#FF7F0E", label="d_TO")
 
-ax1.scatter(np.degrees(sweep_w), CLmax_TO, color="red", s=20, zorder=5)
-ax1.annotate(f"Padrão: {np.degrees(sweep_w):.1f}°\nCLmax={CLmax_TO:.2f}", (np.degrees(sweep_w), CLmax_TO), fontsize=7)
-
-ax2.scatter(np.degrees(sweep_w), d_TO, color="red", s=20, zorder=5)
-ax2.annotate(f"Padrão: {np.degrees(sweep_w):.1f}°\nd_TO={d_TO:.0f}m", (np.degrees(sweep_w), d_TO), fontsize=7)
-
+ax1.axvline(np.degrees(sweep_w), color="red", linestyle="--", label=f"{airplane_name}: Λ={np.degrees(sweep_w):.2f}°, CLmax={CLmax_TO:.2f}, d_TO={d_TO:.0f}m")
+ax1.legend(loc="upper left")
+ax2.legend(loc="upper right")
 
 # %% BREAKDOWN DO PESO
 print("\n=== BREAKDOWN DO PESO ===")
-print(f"W0 = {W0 / gravity:.1f} kgf  ({W0 / W0:.2%} do MTOW)")
-print(f"W_empty = {W_empty / gravity:.1f} kgf ({W_empty / W0:.2%} do MTOW)")
-print(f"W_fuel = {W_fuel / gravity:.1f} kgf ({W_fuel / W0:.2%} do MTOW)")
-print(f"W_payload = {W_payload / gravity:.1f} kgf ({W_payload / W0:.2%} do MTOW)")
-print(f"W_crew = {W_crew / gravity:.1f} kgf ({W_crew / W0:.2%} do MTOW)")
+print(f"W0 = {W0 / gravity:.0f} kgf  ({W0 / W0:.2%} do MTOW)")
+print(f"W_empty = {W_empty / gravity:.0f} kgf ({W_empty / W0:.2%} do MTOW)")
+print(f"W_fuel = {W_fuel / gravity:.0f} kgf ({W_fuel / W0:.2%} do MTOW)")
+print(f"W_payload = {W_payload / gravity:.0f} kgf ({W_payload / W0:.2%} do MTOW)")
+print(f"W_crew = {W_crew / gravity:.0f} kgf ({W_crew / W0:.2%} do MTOW)")
 
 print("\n=== BREAKDOWN DO PESO VAZIO ===")
 for k, v in sorted(airplane["empty_weight"].items(), key=lambda item: item[1], reverse=True):
     if k.startswith("xcg"):
         pass
     else:
-        print(f"{k}: {v / gravity:.1f} kgf ({v / W0:.2%} do MTOW, {v / W_empty:.2%} de W_empty)")
+        print(f"{k}: {v / gravity:.0f} kgf ({v / W0:.2%} do MTOW, {v / W_empty:.2%} de W_empty)")
         k_xcg = k.replace("W", "xcg", 1)
         print(f"{k_xcg} = {airplane['empty_weight'][k_xcg]:.2f} m")
 
@@ -773,15 +771,15 @@ print(f"L/D em loiter: {airplane['fuel_weight']['LD_hist']['loiter']:.2f}")
 print(f"TSFC em loiter: {airplane['fuel_weight']['C_hist']['loiter'] * 3600:.2f}")
 
 print("\n=== PESOS EM CADA FASE ===")
-print(f"Peso Inicial (MTOW): {W0 / gravity:.2f} kgf")
+print(f"Peso Inicial (MTOW): {W0 / gravity:.0f} kgf")
 for i, fase in enumerate(PesosFinais.keys()):
     print(f"{i}. {fase}:")
-    print(f"    -> Peso Final: {PesosFinais[fase]/gravity:.2f} kgf ({PesosFinais[fase]/W0:.2%} do MTOW)")
+    print(f"    -> Peso Final: {PesosFinais[fase]/gravity:.0f} kgf ({PesosFinais[fase]/W0:.2%} do MTOW)")
     diferenca = PesosFinais[fase] - PesosIniciais[fase]
-    print(f"    -> Diferença: {diferenca/gravity:.2f} kgf ({diferenca/W0:.2%} do MTOW, {diferenca/W_fuel:.2%} do W_fuel)")
+    print(f"    -> Diferença: {diferenca/gravity:.0f} kgf ({diferenca/W0:.2%} do MTOW, {diferenca/W_fuel:.2%} do W_fuel)")
 
 W_trapped_fuel = (W0 - PesosFinais["landing"])*(trapped_fuel_factor - 1)
-print(f"* Trapped fuel: {W_trapped_fuel/gravity:.2f} kgf ({W_trapped_fuel/W0:.2%} do MTOW, {W_trapped_fuel/W_fuel:.2%} do W_fuel)")
+print(f"* Trapped fuel: {W_trapped_fuel/gravity:.0f} kgf ({W_trapped_fuel/W0:.2%} do MTOW, {W_trapped_fuel/W_fuel:.2%} do W_fuel)")
 
 print("\n=== L/D MAX EM CADA FASE ===")
 for i, fase in enumerate(PesosFinais.keys()):
@@ -801,7 +799,7 @@ for i, fase in enumerate(PesosFinais.keys()):
     print(f"    -> V operacional={condicao['Mach']*atmosphere(condicao['altitude'])['speed_of_sound']:.1f} m/s, CL_max={CLmax:.2f}, L/D max={LD_max:.2f} em CL={CL_ld_max:.2f}")
 
 # %% ALONGAMENTO x PESO
-AR_space = np.linspace(0.8*AR_w, 1.2*AR_w, 200)
+AR_space = np.linspace(0.7*AR_w, 1.3*AR_w, 100)
 W0_space = []
 We_space = []
 Wf_space = []
@@ -832,18 +830,19 @@ ax1.plot(AR_space, W0_space, label="MTOW", color="#1F77B4")
 ax2.plot(AR_space, Wf_space, label="Fuel Weight", color="#FF7F0E")
 ax2.plot(AR_space, We_space, label="Empty Weight", color="#2CA02C")
 
-ax1.scatter(AR_min, W0_min, color="black", s=20, zorder=5, label="_")
-ax1.annotate(f"Peso mínimo:\nAR={AR_min:.2f}\nW0={W0_min:.2f} kgf", (AR_min, W0_min), fontsize=7)
+ax1.axvline(AR_min, color="black", label=f"Peso mínimo: AR={AR_min:.2f}, W0={W0_min:.0f} kgf", linestyle="--")
+ax1.axvline(AR_w, color="red", linestyle="--", label=f"{airplane_name}: AR={AR_w:.2f}, W0={W0/gravity:.0f} kgf")
 
-ax1.scatter(AR_w, W0 / gravity, color="red", s=20, zorder=5, label="_")
-ax1.annotate(f"Alongamento padrão:\nAR={AR_w:.2f}\nW0={W0/gravity:.2f} kgf", (AR_w, W0 / gravity), fontsize=7)
-
-plt.legend(["MTOW", "Empty Weight", "Fuel Weight"])
-ax1.legend(loc="upper left")
-ax2.legend(loc="upper right")
+lines1, labels1 = ax1.get_legend_handles_labels()
+lines2, labels2 = ax2.get_legend_handles_labels()
+ax1.set_zorder(ax2.get_zorder() + 1)
+ax1.patch.set_visible(False)
+leg1 = ax1.legend(lines1, labels1, loc="upper left")
+ax1.add_artist(leg1)
+ax1.legend(lines2, labels2, loc="upper right")
 
 # %% AREA x PESO E TRAÇÃO REQUERIDA
-area_space = np.linspace(int(0.8 * S_w), int(1.2 * S_w), 200)
+area_space = np.linspace(200, 340, 100)
 W0_space = []
 T0reqs_space = []
 deltaS_wlan_space = []
@@ -865,25 +864,23 @@ ax1.set_ylabel("W0 (kgf)")
 ax2.set_ylabel("T0_req (kN)")
 
 ax1.plot(area_space, W0_space, label="W0")
-ax1.axvline(area_space[np.argmin(np.abs(deltaS_wlan_space))], color="red", linestyle="--", label="deltaS_wlan = 0")
-ax1.scatter(S_w, W0/gravity, color="red", s=20, zorder=5)
-ax1.annotate(f"Padrão: S={S_w:.1f} m^2\nW0={W0/gravity:.1f} kgf", (S_w, W0/gravity), fontsize=7)
+ax1.axvline(area_space[np.argmin(np.abs(deltaS_wlan_space))], color="black", linestyle="--", label="deltaS_wlan=0")
+ax1.axvline(S_w, color="red", label=f"{airplane_name}: S={S_w:.1f} m^2, W0={W0/gravity:.0f} kgf")
 
 for key in T0reqs_space[0].keys():
     T0req_key_space = [T0reqs[key]/1000 for T0reqs in T0reqs_space]
-    ax2.plot(area_space, T0req_key_space, label=f"T0req {key}", linestyle="--")
+    ax2.plot(area_space, T0req_key_space, label=f"T0req {key}", linestyle="--", linewidth=1.3)
 
-ax2.axhline(T0/1000, color="green", label="T0 máximo")
-ax2.scatter(S_w, T0/1000, color="red", s=20, zorder=5, label="_")
-ax2.annotate(f"Padrão: S={S_w:.1f} m^2\nT0={T0/1000:.1f} kN", (S_w, T0/1000), fontsize=7)
+ax2.axhline(T0/1000, color="green", label=f"{airplane_name}: T0={T0/1000:.1f} kN")
 
 handles1, labels1 = ax1.get_legend_handles_labels()
 handles2, labels2 = ax2.get_legend_handles_labels()
-ax2.legend(handles1 + handles2, labels1 + labels2, loc="upper right")
+ax1.legend(handles1, labels1, loc="upper left")
+ax2.legend(handles2, labels2, loc="upper right")
 
 
 # %% MACH X ALTITUDE IDEAL DE CRUZEIRO
-Mach_space = np.linspace(0.50, 1, 100)
+Mach_space = np.linspace(0.50, 1, 50)
 
 casos_cruzeiro = {
     "cruise":    (PesosIniciais["cruise"],    PesosFinais["cruise"],    "C0"),
@@ -909,8 +906,8 @@ for label, (W_i, W_f, cor) in casos_cruzeiro.items():
         h_max_alcance   = [calcular_h_max_alcance_altitude_constante(W_i, W_f, Mach) / ft2m for Mach in Mach_space]
         h_weight_cruise = [calcular_h_max_alcance_LD_constante(W_i, Mach) / ft2m for Mach in Mach_space]
         h_tracao_limite = [calcular_altitude_tracao_limite(Mach, W_i) / ft2m for Mach in Mach_space]
-        plt.plot(Mach_space, h_max_alcance, color=cor, linestyle=":", linewidth=1, label=f"Alcance máx. com altitude constante – {label}")
-        plt.plot(Mach_space, h_weight_cruise, color=cor,  linewidth=1, label=f"Alcance máx. com L/D constante (Cruise Climb) - {label}")
+        plt.plot(Mach_space, h_max_alcance, color=cor, linestyle=":", label=f"Alcance máx. com altitude constante – {label}")
+        plt.plot(Mach_space, h_weight_cruise, color=cor, label=f"Alcance máx. com L/D constante (Cruise Climb) - {label}")
         plt.plot(Mach_space, h_tracao_limite, color=cor, linestyle="--", label=f"Tração limite – {label}")
         
     Mach_atual, h_atual, _ = condicoes_cruzeiro[label]
@@ -926,13 +923,13 @@ for label, (Mach, h, cor) in condicoes_cruzeiro.items():
     plt.scatter(Mach, h / ft2m, color=cor, s=40, zorder=5,
                label=f"{label}: Mach={Mach:.2f}, {h/ft2m:.0f} ft")
 
-plt.axhline(ALTITUDE_CRUZEIRO_MAXIMA / ft2m, color="gray",  linewidth=2, label="Teto de Serviço = 43000 ft")
-plt.axhline(ALTITUDE_CRUZEIRO_MINIMA / ft2m, color="gray", linestyle="-.", linewidth=2, label="Altitude Mínima em Rota = 10000 ft")
+plt.axhline(ALTITUDE_CRUZEIRO_MAXIMA / ft2m, color="gray", label="Teto de Serviço = 43000 ft")
+plt.axhline(ALTITUDE_CRUZEIRO_MINIMA / ft2m, color="gray", linestyle="-.", label="Altitude Mínima em Rota = 10000 ft")
 plt.legend(loc="lower right")
 
 
 # %% T0 REQUERIDO X ALTITUDE
-h_space = np.linspace(1000*ft2m, 50000*ft2m, 200)
+h_space = np.linspace(1000*ft2m, 50000*ft2m, 100)
 
 plt.figure(num="Altitude x T0 requerido")
 plt.title("Altitude x T0 requerido")
@@ -944,13 +941,13 @@ for label, (Mach, h_atual, cor) in condicoes_cruzeiro.items():
     plt.plot(T0_req_space/1000, h_space/ft2m, color=cor, linestyle="--", label=f"{label} (Mach={Mach:.2f})")
     plt.scatter(calcular_T0_req_cruzeiro(Mach, h_atual, PesosIniciais[label] if label != "maxcruise" else PesosIniciais["cruise"])/1000, h_atual / ft2m, color=cor, s=40, zorder=5, label=f"{label} atual ({h_atual/ft2m:.0f} ft)")
 
-plt.axvline(T0/1000, color="black", linewidth=2, label=f"T0 atual = {T0/1000:.0f} kN")
-plt.axhline(ALTITUDE_CRUZEIRO_MAXIMA / ft2m, color="gray", linewidth=2, label="Teto de Serviço = 43000 ft")
-plt.axhline(ALTITUDE_CRUZEIRO_MINIMA / ft2m, color="gray", linestyle="-.", linewidth=2, label="Altitude Mínima em Rota = 10000 ft")
+plt.axvline(T0/1000, color="black", label=f"T0 atual = {T0/1000:.0f} kN")
+plt.axhline(ALTITUDE_CRUZEIRO_MAXIMA / ft2m, color="gray", label="Teto de Serviço = 43000 ft")
+plt.axhline(ALTITUDE_CRUZEIRO_MINIMA / ft2m, color="gray", linestyle="-.", label="Altitude Mínima em Rota = 10000 ft")
 plt.legend(loc="lower right")
 
 # %% DIAGRAMA DE PROJETO
-W0_space = np.linspace(0.3*W0, 2*W0, 500)
+W0_space = np.linspace(0.3*W0, 2*W0, 400)
 
 # DECOLAGEM -> T/W >= 0.2387/(sigma_TO*CLmax_TO*d_TO_max)*W/Sw
 T0_W0_TO_space = 0.2387 / (sigma_TO * CLmax_TO * D_TO_MAX) * W0_space / S_w
@@ -997,18 +994,17 @@ W0_S_LD = W_S_LD / (W_LD / W0)
 # PLOT W0/S x T0/W0
 plt.figure(num="Diagrama de Projeto")
 plt.title("Diagrama de Projeto")
-plt.xlabel("W0/S (kN/m^2)")
+plt.xlabel("W0/S (kgf/m^2)")
 plt.ylabel("T0/W0")
 
-plt.plot(W0_space / S_w / 1000, T0_W0_TO_space, color="#1F77B4", label=f"Decolagem (d_TO={D_TO_MAX:.0f} m)")
-plt.plot(W0_space / S_w / 1000, T0_W0_CR_space, color="#FF7F0E", label=f"Cruzeiro (Mach={Mach_CR:.2f}, altitude={h_CR/ft2m:.0f} ft)")
+plt.plot(W0_space / S_w / gravity, T0_W0_TO_space, color="#1F77B4", label=f"Decolagem (d_TO={D_TO_MAX:.0f} m)")
+plt.plot(W0_space / S_w / gravity, T0_W0_CR_space, color="#FF7F0E", label=f"Cruzeiro (Mach={Mach_CR:.2f}, altitude={h_CR/ft2m:.0f} ft)")
 plt.axhline(T0_W0_CL, color="#9467BD", label=f"Subida (OEI)")
-plt.axvline(W0_S_LD / 1000, color="#2CA02C", label=f"Pouso (d_LD={D_LD_MAX:.0f} m)")
-plt.xlim(min(W0_space / S_w / 1000), max(W0_space / S_w / 1000))
+plt.axvline(W0_S_LD / gravity, color="#2CA02C", label=f"Pouso (d_LD={D_LD_MAX:.0f} m)")
+plt.xlim(min(W0_space / S_w / gravity), max(W0_space / S_w / gravity))
 
 # PONTO DE PROJETO
-plt.scatter(W0 / S_w / 1000, T0 / W0, color="red", marker="x", label=f"{airplane_name}")
-plt.annotate(f"Ponto de projeto:\nW0/S = {W0/S_w/1000:.1f} kN/m^2\nT0/W0 = {T0/W0:.2f}", (W0/S_w/1000, T0/W0))
+plt.scatter(W0 / S_w / gravity, T0 / W0, color="red", marker="x", label=f"{airplane_name}: W0/S = {W0/S_w/gravity:.0f} kgf/m^2, T0/W0 = {T0/W0:.2f}", zorder=10)
 plt.legend()
 
 # PLOT S_req x T0_req
@@ -1024,8 +1020,7 @@ plt.axvline(W0 / W0_S_LD, color="#2CA02C", label=f"Pouso (d_LD={D_LD_MAX:.0f} m)
 plt.xlim(min(W0/(W0_space/S_w)), max(W0/(W0_space/S_w)))
 
 # PONTO DE PROJETO
-plt.scatter(S_w, T0/1000, color="red", marker="x", label=f"{airplane_name}")
-plt.annotate(f"Ponto de projeto:\nS = {S_w:.1f} m^2\nT0 = {T0/1000:.1f} kN", (S_w, T0/1000))
+plt.scatter(S_w, T0/1000, color="red", marker="x", label=f"{airplane_name}: S={S_w:.1f} m^2, T0={T0/1000:.1f} kN", zorder=10)
 plt.legend()
 
 # %% RESTRIÇÕES
@@ -1048,89 +1043,83 @@ print(f"Fração do peso no NLG (fwd) = {frac_nlg_fwd:.2%} (máximo: {FRAC_NLG_F
 
 # %% ANALYZE
 print("\n=== ANALYZE ===")
-analyze(airplane, print_log=True, plot=True)
+analyze(airplane, print_log=True, plot=False)
 
 # %% OTIMIZAÇÃO
-print("\n=== OTIMIZAÇÃO ===")
-cache_otimizacao = {}
-resultados_parametros_otimizados = minimize(
-    fun=funcao_objetivo_otimizacao,
-    x0=normalizar_vetor_parametros(VETOR_PARAMETROS_PADRAO),
-    method="SLSQP",
-    bounds=[(0.0, 1.0)] * len(LIMITES_PARAMETROS),
-    constraints=NonlinearConstraint(avaliar_restricoes, lb=LIMITES_INFERIORES_RESTRICOES, ub=LIMITES_SUPERIORES_RESTRICOES),
-    options={"ftol": 1e-7, "disp": True, "maxiter": 500, "eps": 1e-3}, 
-)
+if PARAMETROS_VARREDURA:
+    print("\n=== OTIMIZAÇÃO ===")
+    cache_otimizacao = {}
+    resultados_parametros_otimizados = minimize(
+        fun=funcao_objetivo_otimizacao,
+        x0=normalizar_vetor_parametros(VETOR_PARAMETROS_PADRAO),
+        method="SLSQP",
+        bounds=[(0.0, 1.0)] * len(LIMITES_PARAMETROS),
+        constraints=NonlinearConstraint(avaliar_restricoes, lb=LIMITES_INFERIORES_RESTRICOES, ub=LIMITES_SUPERIORES_RESTRICOES),
+        options={"ftol": 1e-7, "disp": True, "maxiter": 500, "eps": 1e-3}, 
+    )
 
-resultados_parametros_otimizados.x = desnormalizar_vetor_parametros(resultados_parametros_otimizados.x)
-dados_airplane_otimizado = calcular_dados_otimizacao(construir_airplane_parametros(resultados_parametros_otimizados.x))
+    resultados_parametros_otimizados.x = desnormalizar_vetor_parametros(resultados_parametros_otimizados.x)
+    dados_airplane_otimizado = calcular_dados_otimizacao(construir_airplane_parametros(resultados_parametros_otimizados.x))
 
-if dados_airplane_otimizado is not None:
-    print(f"\nResultados do avião otimizado (não é o avião atual!):")
-    print(f"  W0 = {dados_airplane_otimizado['W0'] / gravity:.1f} kgf  | Atual: {W0 / gravity:.1f} kgf | Redução = {(W0 - dados_airplane_otimizado['W0']) / W0:.2%})")
-    print(f"  W_empty = {dados_airplane_otimizado['W_empty'] / gravity:.1f} kgf  | Atual: {W_empty / gravity:.1f} kgf | Redução = {(W_empty - dados_airplane_otimizado['W_empty']) / W_empty:.2%})")
-    print(f"  W_fuel = {dados_airplane_otimizado['W_fuel'] / gravity:.1f} kgf  | Atual: {W_fuel / gravity:.1f} kgf | Redução = {(W_fuel - dados_airplane_otimizado['W_fuel']) / W_fuel:.2%})")
-    print(f"  d_TO = {dados_airplane_otimizado['d_TO']:.0f} m  | Atual: {d_TO:.0f} m | Aumento = {-(d_TO - dados_airplane_otimizado['d_TO']) / d_TO:.2%})")
-    print(f"  d_LD = {dados_airplane_otimizado['d_LD']:.0f} m  | Atual: {d_LD:.0f} m | Aumento = {-(d_LD - dados_airplane_otimizado['d_LD']) / d_LD:.2%})")
-    print(f"Parâmetros do avião otimizado (não é o avião atual!):")
-    for i, (titulo, xlabel, key, xs, x_padrao) in enumerate(PARAMETROS_VARREDURA):
-        parametro = resultados_parametros_otimizados.x[i]
-        print(f"  {key} = {np.degrees(parametro) if key.startswith('sweep') else parametro:.4f} | Atual = {np.degrees(x_padrao) if key.startswith('sweep') else x_padrao:.4f} | Diferença = {(parametro - x_padrao) / x_padrao:.2%}")
-else:
-    print("Erro na otimização.")
+    if dados_airplane_otimizado is not None:
+        print(f"\nResultados do avião otimizado (não é o avião atual!):")
+        print(f"  W0 = {dados_airplane_otimizado['W0'] / gravity:.0f} kgf  | Atual: {W0 / gravity:.0f} kgf | Redução = {(W0 - dados_airplane_otimizado['W0']) / W0:.2%})")
+        print(f"  W_empty = {dados_airplane_otimizado['W_empty'] / gravity:.0f} kgf  | Atual: {W_empty / gravity:.0f} kgf | Redução = {(W_empty - dados_airplane_otimizado['W_empty']) / W_empty:.2%})")
+        print(f"  W_fuel = {dados_airplane_otimizado['W_fuel'] / gravity:.0f} kgf  | Atual: {W_fuel / gravity:.0f} kgf | Redução = {(W_fuel - dados_airplane_otimizado['W_fuel']) / W_fuel:.2%})")
+        print(f"  d_TO = {dados_airplane_otimizado['d_TO']:.0f} m  | Atual: {d_TO:.0f} m | Aumento = {-(d_TO - dados_airplane_otimizado['d_TO']) / d_TO:.2%})")
+        print(f"  d_LD = {dados_airplane_otimizado['d_LD']:.0f} m  | Atual: {d_LD:.0f} m | Aumento = {-(d_LD - dados_airplane_otimizado['d_LD']) / d_LD:.2%})")
+        print(f"Parâmetros do avião otimizado (não é o avião atual!):")
+        for i, (titulo, xlabel, key, xs, x_padrao) in enumerate(PARAMETROS_VARREDURA):
+            parametro = resultados_parametros_otimizados.x[i]
+            print(f"  {key} = {np.degrees(parametro) if key.startswith('sweep') else parametro:.4f} | Atual = {np.degrees(x_padrao) if key.startswith('sweep') else x_padrao:.4f} | Diferença = {(parametro - x_padrao) / x_padrao:.2%}")
+    else:
+        print("Erro na otimização.")
 
-# %% VARREDURA DE PARÂMETROS
-dados_airplane_padrao = calcular_dados_otimizacao(airplane)
-if dados_airplane_padrao is None:
-    raise ValueError
+    # %% VARREDURA DE PARÂMETROS
+    dados_airplane_padrao = calcular_dados_otimizacao(airplane)
+    if dados_airplane_padrao is None:
+        raise ValueError
 
-print("\n=== VARREDURA DE PARÂMETROS ===")
-for titulo, xlabel, key, xs, x_padrao in PARAMETROS_VARREDURA:
-    print(f"Varrendo {titulo}...")
-    _, ax1 = plt.subplots(num=f"Otimização - {titulo}")
-    ax2 = ax1.twinx()
-    ax1.set_title(f"Otimização - {titulo}")
-    ax1.set_xlabel(xlabel)
-    ax1.set_ylabel("W0 (kgf)", color="#1F77B4")
-    ax2.set_ylabel("Distância (m)")
-    ax1.tick_params(axis="y", labelcolor="#1F77B4")
-    
-    dados_airplanes = []
-    for x in xs:
-        if key in KWARGS_PADRAO:
-            airplane_parametro = standard_airplane(airplane_name, **{key: x})
-        else:
-            airplane_parametro = standard_airplane(airplane_name)
-            airplane_parametro["inputs"][key] = x
-        dados_airplane_parametro = calcular_dados_otimizacao(airplane_parametro)
-        dados_airplanes.append(dados_airplane_parametro)
+    print("\n=== VARREDURA DE PARÂMETROS ===")
+    for titulo, xlabel, key, xs, x_padrao in PARAMETROS_VARREDURA:
+        print(f"Varrendo {titulo}...")
+        _, ax1 = plt.subplots(num=f"Otimização - {titulo}")
+        ax2 = ax1.twinx()
+        ax1.set_title(f"Otimização - {titulo}")
+        ax1.set_xlabel(xlabel)
+        ax1.set_ylabel("W0 (kgf)", color="#1F77B4")
+        ax2.set_ylabel("Distância (m)")
+        ax1.tick_params(axis="y", labelcolor="#1F77B4")
+        
+        dados_airplanes = []
+        for x in xs:
+            if key in KWARGS_PADRAO:
+                airplane_parametro = standard_airplane(airplane_name, **{key: x})
+            else:
+                airplane_parametro = standard_airplane(airplane_name)
+                airplane_parametro["inputs"][key] = x
+            dados_airplane_parametro = calcular_dados_otimizacao(airplane_parametro)
+            dados_airplanes.append(dados_airplane_parametro)
 
-    sombrear_mascara(ax1, xs, [d is None for d in dados_airplanes], color="gray", alpha=0.30, label="Não converge")
-    for key_requisito, op, limite, label, cor in RESTRICOES_VARREDURA:
-        mascara = np.array([(dados_airplanes[i] is not None) and (dados_airplanes[i][key_requisito] > limite if op == ">" else dados_airplanes[i][key_requisito] < limite) for i in range(len(xs))], dtype=bool)
-        sombrear_mascara(ax1, xs if not key.startswith("sweep") else np.degrees(xs), mascara, color=cor, alpha=0.20, label=label)
+        sombrear_mascara(ax1, xs, [d is None for d in dados_airplanes], color="gray", alpha=0.30, label="Não converge")
+        for key_requisito, op, limite, label, cor in RESTRICOES_VARREDURA:
+            mascara = np.array([(dados_airplanes[i] is not None) and (dados_airplanes[i][key_requisito] > limite if op == ">" else dados_airplanes[i][key_requisito] < limite) for i in range(len(xs))], dtype=bool)
+            sombrear_mascara(ax1, xs if not key.startswith("sweep") else np.degrees(xs), mascara, color=cor, alpha=0.20, label=label)
 
-    ax1.plot(xs if not key.startswith("sweep") else np.degrees(xs), [d['W0'] / gravity if d else np.nan for d in dados_airplanes], color="#1F77B4", label="W0 (kgf)")
-    ax2.plot(xs if not key.startswith("sweep") else np.degrees(xs), [d['d_TO'] if d else np.nan for d in dados_airplanes], color="#FF7F0E", label="d_TO (m)")
-    ax2.plot(xs if not key.startswith("sweep") else np.degrees(xs), [d['d_LD'] if d else np.nan for d in dados_airplanes], color="#BCBD22", label="d_LD (m)")
-    ax2.axhline(D_TO_MAX, color="#FF7F0E", linestyle="--", linewidth=1, label=f"Limite d_TO = {D_TO_MAX:.0f} m")
-    ax2.axhline(D_LD_MAX, color="#BCBD22", linestyle="--", linewidth=1, label=f"Limite d_LD = {D_LD_MAX:.0f} m")
+        ax1.plot(xs if not key.startswith("sweep") else np.degrees(xs), [d['W0'] / gravity if d else np.nan for d in dados_airplanes], color="#1F77B4", label="W0 (kgf)")
+        ax2.plot(xs if not key.startswith("sweep") else np.degrees(xs), [d['d_TO'] if d else np.nan for d in dados_airplanes], color="#FF7F0E", label="d_TO (m)")
+        ax2.plot(xs if not key.startswith("sweep") else np.degrees(xs), [d['d_LD'] if d else np.nan for d in dados_airplanes], color="#BCBD22", label="d_LD (m)")
+        ax2.axhline(D_TO_MAX, color="black", linestyle="--", linewidth=1.5, label=f"Pista de {D_TO_MAX:.0f} m")
+        # ax2.axhline(D_LD_MAX, color="#BCBD22", linestyle="--", linewidth=1.5, label=f"Limite d_LD = {D_LD_MAX:.0f} m")
 
-    ax1.scatter(x_padrao if not key.startswith("sweep") else np.degrees(x_padrao), dados_airplane_padrao['W0'] / gravity, color="black", s=30, zorder=6)
-    ax1.annotate(
-        f"Atual: W0={dados_airplane_padrao['W0'] / gravity:.0f} kgf, {xlabel}={x_padrao if not key.startswith('sweep') else np.degrees(x_padrao):.2f}\n"
-        f"d_TO={dados_airplane_padrao['d_TO']:.0f} m, d_LD={dados_airplane_padrao['d_LD']:.0f} m\n"
-        f"SM_fwd={dados_airplane_padrao['SM_fwd']:.2%}, SM_aft={dados_airplane_padrao['SM_aft']:.2%}\n"
-        f"CLv={dados_airplane_padrao['CLv']:.3f}, tank_excess={dados_airplane_padrao['tank_excess']:.2f}\n"
-        f"alpha_tailstrike={dados_airplane_padrao['alpha_tailstrike']:.2f}°, alpha_tipback={dados_airplane_padrao['alpha_tipback']:.2f}°, phi_overturn={dados_airplane_padrao['phi_overturn']:.2f}°\n"
-        f"frac_nlg_aft={dados_airplane_padrao['frac_nlg_aft']:.2%}, frac_nlg_fwd={dados_airplane_padrao['frac_nlg_fwd']:.2%}, mlg_xcg_margin={dados_airplane_padrao['mlg_xcg_margin']:.3f} m\n",
-        xy=(x_padrao if not key.startswith("sweep") else np.degrees(x_padrao), dados_airplane_padrao['W0'] / gravity), fontsize=6, ha="right", zorder=7)
-    ax2.scatter(x_padrao if not key.startswith("sweep") else np.degrees(x_padrao), dados_airplane_padrao['d_TO'], color="black", s=30, zorder=6)
-    ax2.scatter(x_padrao if not key.startswith("sweep") else np.degrees(x_padrao), dados_airplane_padrao['d_LD'], color="black", s=30, zorder=6, marker="^")
+        x_ref = x_padrao if not key.startswith("sweep") else np.degrees(x_padrao)
+        ax1.axvline(x_ref, color="red", linestyle="--", linewidth=2, zorder=6, label=f"{airplane_name}: {xlabel}={x_ref:.2f}")
 
-    handles1, labels1 = ax1.get_legend_handles_labels()
-    handles2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(handles1 + handles2, labels1 + labels2, loc="upper left")
+        handles1, labels1 = ax1.get_legend_handles_labels()
+        handles2, labels2 = ax2.get_legend_handles_labels()
+        leg2 = ax2.legend(handles2, labels2, loc="upper right")
+        ax2.add_artist(leg2)
+        ax2.legend(handles1, labels1, loc="upper left")
 
 # %% DICIONÁRIO DO AVIÃO
 with open(f"{airplane_name.lower()}.json", "w") as jsonfile:
